@@ -1,0 +1,76 @@
+\documentclass[10pt,a4paper]{article}
+
+\input{AEDmacros}
+\usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
+
+
+\titulo{Trabajo practico 1: Especificacion y WP}
+\subtitulo{Primer cuatrimestre de 2024}
+
+\fecha{\today}
+
+\materia{Algoritmos y Estructuras de Datos - DC - UBA}
+\grupo{Grupo: EVLUAFGUEYVCXPKHDNUP}
+
+\integrante{Curti, Nahuel}{97/23}{nahuel0curti@gmail.com}
+\integrante{Dosio, Martin}{291/23}{dosiomartin@gmail.com}
+\integrante{Lemes, Tiziano}{796/23}{tizilemes@gmail.com}
+\integrante{Rizzi, Francisco}{766/23}{rizzifranciscojose@gmail.com}
+% Pongan cuantos integrantes quieran
+
+% Declaramos donde van a estar las figuras
+% No es obligatorio, pero suele ser comodo
+\graphicspath{{../static/}}
+
+\begin{document}
+
+\maketitle
+
+\section{1. Especificacion}
+
+
+
+
+\subsection*{1. redistribucionDeLosFrutos:}
+	Calcula los recursos que obtiene cada uno de los individuos luego de que se redistribuyen
+	los recursos del fondo monetario comun en partes iguales. El fondo monetario comun se compone de la suma de recursos
+	iniciales aportados por todas las personas que cooperan. La salida es la lista de recursos que tendra cada jugador.
+
+	\begin{proc}{redistribucionDeLosFrutos}{\In recursos : \TLista{\float}, \In cooperan : \TLista{\bool}}{\TLista{\float}}
+		\hfill 
+
+		\aux{Prom}{Rec: \TLista{\float}, Coop: \TLista{\float}}{\float}
+		{ 
+			\frac{\sum\limits_{i=0}^{ \longitud{ Rec }-1 } \IfThenElse{Coop[i]}{Rec[i]}{0}}{\longitud{ Rec }}
+		}
+
+		\hfill 
+
+		\pred{TodosPositivos}{l : \TLista{\float}}
+		{
+			\paraTodo{i}{\ent}{( 0\leq i < \longitud{l} ) \implicaLuego (l[i] \geq 0) }
+		}
+
+		\hfill 
+		
+		\requiere{ \longitud{ recursos } \geq  1					}
+		\requiere{ \longitud{ recursos } = \longitud{ cooperan } 	}
+		\requiere{ TodosPositivos( recursos )						}
+		\requiere{ Promedio= Prom( recursos, cooperan )						}
+
+		\hfill 
+
+		\asegura{ \longitud{ res } = \longitud{ recursos } = \longitud{ cooperan } }
+
+		% La comente porque me parecia grotezca
+		% \asegura{ \paraTodo{i}{\ent}{( 0\leq i < \longitud{res} ) \implicaLuego ( (( Cooperan[i] = \True )\land( res[i] = Promedio(recursos, cooperan) )) \lor (( Cooperan[i] = \False )\land( res[i] = recursos[i] + Promedio(recursos, cooperan) )) ) } }
+		
+		\asegura{  
+			\paraTodo{i}{\ent}
+			{( 0\leq i < \longitud{res} ) \implicaLuego ( \IfThenElse{(cooperan[i] = \True)}{(res[i] = Promedio)}{(res[i] = recursos[i] + Promedio)} ) } 
+		}
+
+	\end{proc}
+
+
+\end{document}
