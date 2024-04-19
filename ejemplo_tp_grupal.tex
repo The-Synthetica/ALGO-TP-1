@@ -71,6 +71,24 @@
 		}
 
 	\end{proc}
+	
+\subsection*{2. trayectoriaDeLosFrutosIndividualesALargoPlazo:}
+	Actualiza (In/Out) la lista de 
+	\textit{trayectorias}
+	de los recursos de cada uno de los individuos. Inicialmente, cada una de las trayectorias (listas de recursos) contiene un único elemento que representa los recursos iniciales
+	del individuo. El procedimiento agrega a las 
+	\textit{trayectorias}
+	los recursos que los individuos van obteniendo a medida que se van produciendo los resultados de los 
+	\textit{eventos}
+	en función de la lista de 
+	\textit{pagos}
+	que le ofrece la naturaleza (o casa de apuestas) a cada uno de los individuos, las 
+	\textit{apuestas}
+	(o inversiones) que realizan los individuos en cada paso temporal, y la lista de individuos que 
+	\textit{cooperan}
+	aportando al fondo monetario común.
 
+	\begin{proc}{trayectoriaDeLosFrutosIndividualesALargoPlazo}{\Inout trayectorias : {\TLista{\TLista{\float}}} \ In cooperan : \TLista{\bool} }
+		\hfill
 
 \end{document}
