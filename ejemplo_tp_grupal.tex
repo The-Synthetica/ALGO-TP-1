@@ -30,6 +30,20 @@
 
 
 
+\subsection*{0. Predicados y Auxiliares globales:}
+	\hfill
+
+	\pred{TodosPositivos}{l : \TLista{\float}}
+		{
+			\paraTodo{i}{\ent}{( 0\leq i < \longitud{l} ) \implicaLuego (l[i] \geq 0) }
+		}
+	
+	\pred{esMatriz}{seqDeSeq : \TLista{\TLista{\float}}}
+	{\paraTodo{i}{\ent}{(0 \leq i < filas(seqDeSeq)) \implicaLuego \longitud{seqDeSeq[i]}>0 \wedge \paraTodo{j}{\ent}{(0 \leq j < filas(seqDeSeq))
+	\implicaLuego \longitud{seqDeSeq[i]} = \longitud{seqDeSeq[j]}}}}
+
+
+
 
 \subsection*{1. redistribucionDeLosFrutos:}
 	Calcula los recursos que obtiene cada uno de los individuos luego de que se redistribuyen
@@ -42,13 +56,6 @@
 		\aux{Prom}{recursos: \TLista{\float}, cooperan: \TLista{\float}}{\float}
 		{ 
 			\frac{\sum\limits_{i=0}^{ \longitud{ recursos }-1 } \IfThenElse{cooperan[i]}{recursos[i]}{0}}{\longitud{ recursos }}
-		}
-
-		\hfill 
-
-		\pred{TodosPositivos}{l : \TLista{\float}}
-		{
-			\paraTodo{i}{\ent}{( 0\leq i < \longitud{l} ) \implicaLuego (l[i] \geq 0) }
 		}
 
 		\hfill 
