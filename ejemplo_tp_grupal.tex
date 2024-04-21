@@ -42,6 +42,8 @@
 	{\paraTodo{i}{\ent}{(0 \leq i < filas(seqDeSeq)) \implicaLuego \longitud{seqDeSeq[i]}>0 \wedge \paraTodo{j}{\ent}{(0 \leq j < filas(seqDeSeq))
 	\implicaLuego \longitud{seqDeSeq[i]} = \longitud{seqDeSeq[j]}}}}
 
+	\aux{sumatoria}{l:\TLista{\float}}{\float}{\sum\limits_{i=0}^{ \longitud{l}-1}{l[i]}}
+
 
 
 
@@ -114,7 +116,7 @@
 		\requiere { (\forall  trayectoria: \float)(trayectoria \in trayectorias_0 \longrightarrow 0 \leq trayectoria)}
 		\requiere { (\forall  evento: \ent)(evento \in eventos \longrightarrow 0 \leq evento < filas(eventos))}
 		\requiere { (\forall  apuesta: \float)(apuesta \in 0 \leq apuesta \leq 1)}
-		\requiere { (\forall  i: \ent)(0 \leq i < \longitud{apuestas} \implicaLuego \sum\limits_{i=0}^{ \longitud{ apuestas }-1 } apuestas[i] = 1 )}                    
+		\requiere { (\forall  i: \ent)(0 \leq i < \longitud{apuestas} \implicaLuego sumatoria(apuestas) = 1 )}                    
 
 
 		\hfill
