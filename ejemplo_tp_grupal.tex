@@ -53,9 +53,9 @@
 	\begin{proc}{redistribucionDeLosFrutos}{\In recursos : \TLista{\float}, \In cooperan : \TLista{\bool}}{\TLista{\float}}
 		\hfill 
 	
-		\aux{Prom}{recursos: \TLista{\float}, cooperan: \TLista{\float}}{\float}
+		\aux{Prom}{rec: \TLista{\float}, coop: \TLista{\float}}{\float}
 		{ 
-			\frac{\sum\limits_{i=0}^{ \longitud{ recursos }-1 } \IfThenElse{cooperan[i]}{recursos[i]}{0}}{\longitud{ recursos }}
+			\frac{\sum\limits_{i=0}^{ \longitud{ rec }-1 } \IfThenElse{coop[i]}{rec[i]}{0}}{\longitud{ rec }}
 		}
 
 		\hfill 
@@ -112,7 +112,7 @@
 		\requiere { filas(apuestas) = filas(pagos) }
 		\requiere { (\forall  pago: \float)(pago \in pagos \longrightarrow 0 \leq pago)} 
 		\requiere { (\forall  trayectoria: \float)(trayectoria \in trayectorias_0 \longrightarrow 0 \leq trayectoria)}
-		\requiere { (\forall  evento: \ent)(evento \in eventos \longrightarrow 0 \leq evento < \longitud{filas(eventos)})}
+		\requiere { (\forall  evento: \ent)(evento \in eventos \longrightarrow 0 \leq evento < filas(eventos))}
 		\requiere { (\forall  apuesta: \float)(apuesta \in 0 \leq apuesta \leq 1)}
 		\requiere { (\forall  i: \ent)(0 \leq i < \longitud{apuestas} \implicaLuego \sum\limits_{i=0}^{ \longitud{ apuestas }-1 } apuestas[i] = 1 )}                    
 
@@ -120,7 +120,9 @@
 		\hfill
 		
 
-		\asegura {\longitud{trayectorias} = \longitud{trayectorias_0} \yLuego (\forall individuo:\ent)(0 \leq individuo < \longitud{trayectorias_0} \implicaLuego trayectorias[individuo][0] = trayectorias_0[individuo][0])}
+		\asegura {\longitud{trayectorias} = \longitud{trayectorias_0} \yLuego 
+		
+		(\forall individuo:\ent)(0 \leq individuo < \longitud{trayectorias_0} \implicaLuego trayectorias[individuo][0] = trayectorias_0[individuo][0])}
 		\asegura {filas(trayectorias) - 1 = filas(eventos)}
 		\asegura { (\forall individuo:\ent)(0 \leq individuo < \longitud{trayectorias_0}) \yLuego (\forall paso:\ent)(1 \leq paso \leq filas(eventos)) \implicaLuego
 		\yLuego 
