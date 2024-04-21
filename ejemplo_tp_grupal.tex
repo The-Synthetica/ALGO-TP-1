@@ -26,7 +26,7 @@
 
 \maketitle
 
-\section{1. Especificacion}
+\section{Especificacion}
 
 
 
@@ -39,9 +39,9 @@
 	\begin{proc}{redistribucionDeLosFrutos}{\In recursos : \TLista{\float}, \In cooperan : \TLista{\bool}}{\TLista{\float}}
 		\hfill 
 
-		\aux{Prom}{Rec: \TLista{\float}, Coop: \TLista{\float}}{\float}
+		\aux{Prom}{recursos: \TLista{\float}, cooperan: \TLista{\float}}{\float}
 		{ 
-			\frac{\sum\limits_{i=0}^{ \longitud{ Rec }-1 } \IfThenElse{Coop[i]}{Rec[i]}{0}}{\longitud{ Rec }}
+			\frac{\sum\limits_{i=0}^{ \longitud{ recursos }-1 } \IfThenElse{cooperan[i]}{recursos[i]}{0}}{\longitud{ recursos }}
 		}
 
 		\hfill 
@@ -72,7 +72,7 @@
 
 	\end{proc}
 	
-\subsection*{2. trayectoriaDeLosFrutosIndividualesALargoPlazo:}
+	\subsection*{2. trayectoriaDeLosFrutosIndividualesALargoPlazo:}
 	Actualiza (In/Out) la lista de 
 	\textit{trayectorias}
 	de los recursos de cada uno de los individuos. Inicialmente, cada una de las trayectorias (listas de recursos) contiene un único elemento que representa los recursos iniciales
@@ -88,7 +88,77 @@
 	\textit{cooperan}
 	aportando al fondo monetario común.
 
-	\begin{proc}{trayectoriaDeLosFrutosIndividualesALargoPlazo}{\Inout trayectorias : {\TLista{\TLista{\float}}} \ In cooperan : \TLista{\bool} }
+	\begin{proc}{trayectoriaDeLosFrutosIndividualesALargoPlazo}{\Inout trayectorias : {\TLista{\TLista{\float}}} , \In cooperan : \TLista{\bool}, \In apuestas : {\TLista{\TLista{\float}}}, \In pagos : {\TLista{\TLista{\float}}}, \In eventos : \TLista{\TLista{ \mathbb{ N }}}}
+		
+		\hfill 
+
+		\aux{Prom}{trayectorias : {\TLista{\TLista{\float}}}, fila : \mathbb{N} , apuestas : {\TLista{\TLista{\float}}} , pagos : {\TLista{\TLista{\float}}}, eventos : {\TLista{\TLista{\mathbb{N}}}}, cooperan : {\TLista{bool}}}
+		
+		
+		{ 
+			\frac{\sum\limits_{i=0}^{ \longitud{cooperan}-1 } \IfThenElse{cooperan[i]}{(apuestas[i][eventos[i][fila]]*pagos[eventos[i][fila]]*trayectorias[i][i][fila])}{0}}
+			
+			{\longitud{cooperan}}
+		}
+
 		\hfill
+
+		
+		\requiere { trayectorias = T_0}
+		\requiere { \longitud{ T_0 } = \longitud{ eventos } = \longitud{ cooperan} = \longitud{ pagos } = \longitud{ apuestas} }
+		\requiere { esMatriz(T_0) \land esMatriz(eventos) \land esMatriz(apuestas) \land esMatriz(pagos)}
+		\requiere { \longitud{ T_0} \geq 1  \wedge  filas(trayectorias) = 1 } 
+		\requiere { filas(apuestas) = filas(pagos) }
+		\requiere { (\forall  pago: \float)(pago \in pagos \longrightarrow 0 \leq pago)} 
+		\requiere { (\forall  trayectoria: \float)(trayectoria \in T_0 \longrightarrow 0 \leq trayectoria)}
+		\requiere { (\forall  evento: \ent)(evento \in eventos \longrightarrow 0 \leq evento < \longitud{filas(eventos)})}
+		\requiere { (\forall  apuesta: \float)(apuesta \in 0 \leq apuesta \leq 1)}
+		\requiere { (\forall  i: \ent)(0 \leq i < \longitud{apuestas} \implicaLuego \sum\limits_{i=0}^{ \longitud{ apuestas }-1 } apuestas[i] = 1 )}                    
+
+
+		\hfill
+		
+
+		\asegura {\longitud{trayectorias} = \longitud{T_0} \yLuego (\forall individuo:\ent)(0 \leq individuo < \longitud{T_0} \implicaLuego trayectorias[individuo][0] = T_0[individuo][0])}
+		\asegura {filas(trayectorias) - 1 = filas(eventos)}
+		\asegura { (\forall individuo:\ent)(0 \leq individuo < \longitud{T_0}) \yLuego (\forall paso:\ent)(1 \leq paso \leq filas(eventos)) \implicaLuego
+		\yLuego 
+		
+		\textit{Promedio} = Prom (trayectorias, paso - 1, apuestas, pagos, eventos, cooperan)
+		\implicaLuego 
+		
+		(trayectorias[individuo][paso] = \textit{Promedio}) \longleftrightarrow (cooperan[individuo] = \textit{true})
+		
+		\oLuego 
+		
+		(trayectorias[individuo][paso] =
+		
+		apuestas[individuo][eventos[individuo[paso-1]]] * pagos[individuo][eventos[individuo[paso-1]]] * 
+		
+		trayectorias[individuo][paso-1] + \textit{Promedio}) \longleftrightarrow (cooperan[individuo] = \textit{false})}
+
+	\end{proc}
+
+	\subsection*{3. trayectoriaExtrañaEscalera}
+	Esta función devuelve True sii en la trayectoria de un individuo existe un único punto mayor a sus vecinos (llamado máximo local). Un elemento es máximo local si es mayor estricto que sus vecinos inmediatos.
+
+
+
+	\begin{proc}{trayectoriaExtrañaEscalera}{\In trayectoria : \TLista{\float}}{\bool}
+		
+		\hfill
+
+		\requiere {\longitud{trayectoria} > 1 \wedge TodosPositivos(trayectoria)}
+
+
+		\asegura {res = \textit{true} \leftrightarrow esÓExcluyente(esÓExcluyenteExcluyente((trayectoria[0]> trayectoria), trayectoria[\longitud{trayectoria}-1]> trayectoria[\longitud{trayectoria}-2]), 
+		(\exists i: \ent)(\sum_{i=1}^{\longitud{trayectoria}-2} \IfThenElse{trayectoria[i] > trayectoria [i+1] \yLuego trayectoria[i] > trayectoria[i-1]}{1}{0}=1))}
+
+
+		\pred{esÓExcluyente}{x : \bool , y : \bool}
+		{(x \wedge \neg y) \lor (\neg x \wedge y)}
+
+		
+	\end{proc}
 
 \end{document}
