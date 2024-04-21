@@ -3,7 +3,6 @@
 \input{AEDmacros}
 \usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
 
-
 \titulo{Trabajo practico 1: Especificacion y WP}
 \subtitulo{Primer cuatrimestre de 2024}
 
@@ -28,8 +27,6 @@
 
 \section{Especificacion}
 
-
-
 \subsection*{0. Predicados y Auxiliares globales:}
 	\hfill
 
@@ -41,9 +38,6 @@
 	\pred{esMatriz}{seqDeSeq : \TLista{\TLista{\float}}}
 	{\paraTodo{i}{\ent}{(0 \leq i < filas(seqDeSeq)) \implicaLuego \longitud{seqDeSeq[i]}>0 \wedge \paraTodo{j}{\ent}{(0 \leq j < filas(seqDeSeq))
 	\implicaLuego \longitud{seqDeSeq[i]} = \longitud{seqDeSeq[j]}}}}
-
-
-
 
 \subsection*{1. redistribucionDeLosFrutos:}
 	Calcula los recursos que obtiene cada uno de los individuos luego de que se redistribuyen
@@ -165,7 +159,190 @@
 		\pred{esÓExcluyente}{x : \bool , y : \bool}
 		{(x \wedge \neg y) \lor (\neg x \wedge y)}
 
-		
 	\end{proc}
+
+\section{Demostraciones de Correctitud}
+
+\underline{Definimos:}
+
+\begin{itemize} 
+    \item Pc \equiv {apuesta_c + apuesta_s = 1 \wedge pago_c > 0 \wedge pago_s > 0 \wedge apuesta_c > 0 \wedge apuesta_s > 0 \wedge recurso > 0 \wedge res=recursos \wedge i=0}
+
+    \item Qc \equiv {res=recurso(apuesta_c pago_c)^{\#apariciones(eventos,T)} (apuesta_s pago_s)^{\#apariciones(eventos,F)}}
+
+    \item B \equiv i < |eventos|
+
+    \item I \equiv 0 \leq i+1 \leq |eventos| \yLuego res=recurso(apuesta_c pago_c)^{\#(subseq (eventos,0,i),T)} (apuesta_s pago_s)^{\#(subseq (eventos,0,i),F)}
+
+    \item fv \equiv |eventos|-i
+\end{itemize}
+
+\vspace{5mm}
+
+\begin{enumerate}
+    \item Pc \implica \hspace{2} I
+    
+    \item{\{I \wedge B\} S \{I\}}
+    \vspace{2mm}
+
+    Probamos I \wedge B \implica wp(S,I)
+    \vspace{2mm}
+
+    wp(S1, i:=i+1, I)
+    \vspace{2mm}
+    
+    \equiv wp(S1, wp(i:=i+1, I))
+    \vspace{2mm}
+    
+    \equiv wp(S1, def(i+1) \yLuego I_{i+1}^i )
+    \vspace{2mm}
+
+    \equiv wp(S1, I_{i+1}^i )
+    \vspace{2mm}
+
+    \equiv eventos[i]=true \yLuego ((eventos[i]=true \wedge wp(res=res*apuestas_c*pagos_c , I_{i+1}^i) \vee (( eventos[i]=false \wedge wp(res=res*apuestas_s*pagos_s , I_{i+1}^i))
+    \vspace{2mm}
+
+    \equiv eventos[i]=true \yLuego ((eventos[i]=true \wedge (def(res*apuestas_c*pagos_c) \yLuego (I_{i+1}^i)_{res*apuestas_c*pagos_c}^{res}) \vee ((eventos[i]=false \wedge (def(res*apuestas_s*pagos_s) \yLuego (I_{i+1}^i)_{res*apuestas_s*pagos_s}^{res}))
+    \vspace{2mm}
+
+    \equiv eventos[i]=true \yLuego ((eventos[i]=true \yLuego (I_{i+1}^i)_{res*apuestas_c*pagos_c}^{res}) \vee ((eventos[i]=false \yLuego (I_{i+1}^i)_{res*apuestas_s*pagos_s}^{res}))
+    \vspace{2mm}
+
+    Dividimos por casos:
+    \vspace{2mm}
+
+%true
+    
+    \underline{Si eventos[i]=true}
+    \vspace{2mm}
+
+    eventos[i]=true \wedge (I_{i+1}^i)_{res*apuestas_c*pagos_c}^{res}
+    \vspace{2mm}
+
+    \equiv (I_{i+1}^i)_{res*apuestas_s*pagos_s}^{res}
+    \vspace{2mm}
+    
+    \equiv 0 \leq i+1 \leq |eventos| \yLuego res*apuestas_s*pagos_s=recurso(apuesta_c pago_c)^{\#(subseq (eventos,0,i+1),T)} (apuesta_s pago_s)^{\#(subseq (eventos,0,i+1),F)} 
+    \vspace{2mm}
+
+    Por hipótesis: 0 \leq i \leq |eventos| \hspace{3} y \hspace{3} i < |eventos|, entonces \hspace{3} 0 \leq i+1 \leq |eventos|
+    \vspace{2mm}
+    
+    Por hipótesis: res=recurso(apuesta_c pago_c)^{\#(subseq (eventos,0,i),T)} (apuesta_s pago_s)^{\#(subseq (eventos,0,i),F)}, \hspace{3} entonces: 
+    \vspace{2mm}
+
+    res*apuestas_c*pagos_c = recurso(apuesta_c pago_c)^{\#(subseq (eventos,0,i),T)} (apuesta_s pago_s)^{\#(subseq (eventos,0,i),F)}*apuestas_c*pagos_c
+    \vspace{2mm}
+
+    = recurso(apuesta_c pago_c)^{\#(subseq (eventos,0,i+1),T)} (apuesta_s pago_s)^{\#(subseq (eventos,0,i),F)}
+    \vspace{2mm}
+
+    Por ambas hipótesis demostramos que I \wedge B \implica wp(S,I) \hspace{3} cuando \hspace{3} eventos[i]=true
+    \vspace{2mm}
+
+%false
+
+    \underline{Si eventos[i]=false}
+    \vspace{2mm}
+
+    eventos[i]=false \wedge (I_{i+1}^i)_{res*apuestas_s*pagos_s}^{res}
+    \vspace{2mm}
+
+    \equiv (I_{i+1}^i)_{res*apuestas_s*pagos_s}^{res}
+    \vspace{2mm}
+    
+    \equiv 0 \leq i+1 \leq |eventos| \yLuego res*apuestas_s*pagos_s=recurso(apuesta_c pago_c)^{\#(subseq (eventos,0,i+1),T)} (apuesta_s pago_s)^{\#(subseq (eventos,0,i+1),F)} 
+    \vspace{2mm}
+
+    Por hipótesis: 0 \leq i \leq |eventos| \hspace{3} y \hspace{3} i < |eventos|, entonces \hspace{3} 0 \leq i+1 \leq |eventos|
+    \vspace{2mm}
+    
+    Por hipótesis: res=recurso(apuesta_c pago_c)^{\#(subseq (eventos,0,i),T)} (apuesta_s pago_s)^{\#(subseq (eventos,0,i),F)}, \hspace{3} entonces: 
+    \vspace{2mm}
+
+    res*apuestas_s*pagos_s = recurso(apuesta_c pago_c)^{\#(subseq (eventos,0,i),T)} (apuesta_s pago_s)^{\#(subseq (eventos,0,i),F)}*apuestas_s*pagos_s
+    \vspace{2mm}
+
+    = recurso(apuesta_c pago_c)^{\#(subseq (eventos,0,i),T)} (apuesta_s pago_s)^{\#(subseq (eventos,0,i+1),F)}
+    \vspace{2mm}
+
+    Por ambas hipótesis demostramos que I \wedge B \implica wp(S,I) \hspace{3} cuando \hspace{3} eventos[i]=true
+    \vspace{2mm}
+
+    Concluímos que {\{I \wedge B\} S \{I\}}
+    \vspace{2mm}
+
+    \item I \wedge \neg B \implica Qc
+    
+    \item {\{I \wedge B\ \wedge fv=v_0\} \hspace{2} S \hspace{2} \{fv<v_0\}}
+    \vspace{2mm}
+
+    Probamos I \wedge B \wedge fv=v_0 \implica wp(S,fv<v_0)
+    \vspace{2mm}
+
+    wp(S1, i:=i+1, |eventos|-i < v_0)
+    \vspace{2mm}
+
+    \equiv wp(S1, wp(i=i+1, |eventos|-i < v_0))
+    \vspace{2mm}
+
+    \equiv wp(S1, def(i+1) \yLuego (|eventos|-i < v_0)_{i+1}^i)
+    \vspace{2mm}
+
+    \equiv wp(S1, |eventos|-(i+1) < v_0)
+    \vspace{2mm}
+
+    \equiv eventos[i]=true \yLuego ((eventos[i]=true \wedge wp(res=res*apuestas_c*pagos_c, |eventos|-(i+1) < v_0) \vee (eventos[i]=false \wedge wp(res=res*apuestas_s*pagos_s, |eventos|-(i+1) < v_0)
+    \vspace{2mm}
+
+    \equiv eventos[i]=true \yLuego ((eventos[i]=true \wedge (def(res=res*apuestas_c*pagos_c) \yLuego (|eventos|-(i+1) < v_0)_{res*apuestas_c*pagos_c}^{res}) \vee (eventos[i]=false \wedge (def(res=res*apuestas_s*pagos_s) \yLuego (|eventos|-(i+1) < v_0)_{res*apuestas_s*pagos_s}^{res})
+    \vspace{2mm}
+
+    \equiv eventos[i]=true \yLuego (eventos[i]=true \yLuego |eventos|-(i+1) < v_0) \vee (eventos[i]=false \yLuego |eventos|-(i+1) < v_0)
+    \vspace{2mm}
+
+    \equiv (eventos[i]=true \vee eventos[i]=false) \wedge |eventos|-(i+1) < v_0
+    \vspace{2mm}
+
+    \equiv |eventos|-(i+1) < v_0
+    \vspace{2mm}
+
+    fv=v_0 \hspace{3} equivale \hspace{3} a \hspace{3} |eventos|-i, entonces \hspace{3} reemplazamos \hspace{3} v_0 \hspace{3} con \hspace{3} esa \hspace{3} expresión:
+    \vspace{2mm}
+
+    \equiv |eventos|-(i+1) < |eventos|-i
+    \vspace{2mm}
+
+    \equiv -(i+1) < -i
+    \vspace{2mm}
+
+    \equiv i+1 > i
+    \vspace{2mm}
+
+    Concluímos que {\{I \wedge B\ \wedge fv=v_0\} \hspace{2} S \hspace{2} \{fv<v_0\}}
+    \vspace{2mm}
+
+    \item I \wedge fv \leq 0 \implica \neg B
+    \vspace{2mm}
+
+    fv \leq 0 \equiv |eventos|-i \leq 0
+    \vspace{2mm}
+
+    \hspace{27} \equiv |eventos| \leq i
+    \vspace{2mm}
+
+    \hspace{19} \implica \hspace{2} \neg (i < |eventos|)
+    \vspace{2mm}
+
+    \hspace{27} \equiv \neg B
+    \vspace{2mm}
+
+    {Concluímos que I \wedge fv \leq 0 \implica \neg B}
+    \vspace{2mm}
+
+    {Al cumplirse 4 y 5, concluímos que el ciclo siempre termina}
+    
+\end{enumerate}
 
 \end{document}
